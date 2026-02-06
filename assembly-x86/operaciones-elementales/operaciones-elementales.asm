@@ -77,9 +77,8 @@ main:
 	mov rdx, [n2]
 	mov rcx, [n1masn2]
 
-	sub rsp, 8
+	sub rax, rax
 	call printf
-	add rsp, 8
 
 	ret
 section .note.GNU-stack noalloc noexec nowrite progbits; Sin esto me tira warning. Sin esto anda igual.
