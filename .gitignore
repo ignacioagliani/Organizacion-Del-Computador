@@ -1,0 +1,100 @@
+# ============================================================
+# Assembly (.asm) - NASM / GAS - build artifacts + editor files
+# ============================================================
+
+# --- Outputs / binaries ---
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# Common binary names
+a.out
+
+# --- Debugging / profiling ---
+*.dSYM/
+*.pdb
+*.idb
+*.ilk
+*.dbg
+*.dmp
+*.core
+core
+vgcore.*
+gmon.out
+perf.data
+perf.data.*
+
+# --- Build directories ---
+build/
+Build/
+dist/
+Dist/
+out/
+Out/
+bin/
+Bin/
+obj/
+Obj/
+target/
+
+# --- NASM / YASM / assembler intermediates ---
+*.i          # preprocessed output (sometimes used)
+*.s          # if you generate assembly from other sources
+*.pp         # generic preprocessor outputs
+*.tmp
+*.temp
+
+# --- Dependency files (if you generate them) ---
+*.d
+*.dep
+
+# --- Logs ---
+*.log
+
+# --- OS junk ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.iml
+
+# Vim
+*~
+.*.swp
+.*.swo
+.*.swn
+.Session.vim
+
+# Emacs
+\#*\#
+.#*
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# --- Windows tooling ---
+*.stackdump
+
+# --- Optional: local env files ---
+.env
+.env.*
