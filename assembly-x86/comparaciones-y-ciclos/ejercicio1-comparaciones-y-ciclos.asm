@@ -24,27 +24,32 @@ comparar_numeros:
 
 iguales:
 	mov	rdi,igual
-	sub	rax,rax
+	sub	rsp,8
 	call	printf
+	add	rsp,8
 	ret
 
 mayor:
 	mov	rdi,es_mayor
 	mov	rsi,[n1]
 	mov	rdx,[n2]
-	sub	rax,rax
+	sub	rsp,8
 	call	printf
+	add	rsp,8
 	ret
 
 menor:
 	mov	rdi,es_menor
 	mov	rsi,[n1]
 	mov	rdx,[n2]
-	sub	rax,rax
+	sub	rsp,8
 	call	printf
+	add	rsp,8
 	ret
 
 main:
+	sub	rsp,8
 	call	comparar_numeros
+	add	rsp,8
 	ret
-
+section .note.GNU-stack noalloc noexec nowrite progbits;

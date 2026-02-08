@@ -20,3 +20,7 @@ Para pasar los parametros a las funciones de C se deben hacer uso de los registr
 - `p4: rcx`
 - `p5: r8`
 - `p6: r9`
+
+### Detalle Importante
+
+Antes de realizar la llamada a una función hay que restarle 8 al registro `rsp` y después de hacer `call` y que sumarle 8 al mismo registro. Al llamar a funciones hechas por nosotros, tambien debemos hacerlo.

@@ -14,7 +14,9 @@ section .bss
 section .text
 pedir_usuario:	
 	mov	rdi,buffer	; Pongo como parametro de gets el buffer
+	sub	rsp,8
 	call	gets
+	add	rsp,8
 	mov	al,[buffer]	; Uso AL (registro de 1 byte) para almacenar el primer caracter
 	mov	[letra_usuario],al ; Guardo caracter en 'letra_usuario'
 	ret
@@ -40,12 +42,17 @@ fin:
 encontrada:
 	ret
 main:
+	sub	rsp,8
 	call	pedir_usuario
+	add	rsp,8
+	sub	rsp,8
 	call	buscar_elemento
+	add	rsp,8
 	mov	rdi,str_indice
 	mov	rsi,rcx
-	sub	rax,rax
+	sub	rsp,8
 	call	printf
+	add	rsp,8
 	ret
 
 section .note.GNU-stack noalloc noexec nowrite progbits

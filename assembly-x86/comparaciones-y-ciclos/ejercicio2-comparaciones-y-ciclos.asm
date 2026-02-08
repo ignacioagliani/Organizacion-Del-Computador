@@ -22,7 +22,9 @@ es_mayor:
 	imul	eax,[resultado]
 	mov	[resultado],eax
 	dec	dword [n]
+	sub	rsp,8
 	call	factorial
+	add	rsp,8
 
 es_igual:
 	mov 	eax,0
@@ -30,20 +32,24 @@ es_igual:
 
 es_menor:
 	mov	rdi,str_error
-	sub	rax,rax
+	sub	rsp,8
 	call	printf
+	add	rsp,8
 	mov	eax,-1
 	ret
 
 main:
+	sub	rsp,8
 	call	factorial
+	add	rsp,8
         cmp	eax,-1
 	je	fin
 	mov     rdi,str_resultado
         mov     rsi,[numero]
         mov     rdx,[resultado]
-        sub     rax,rax
+        sub     rsp,8
         call    printf
+        add	rsp,8
 	ret
 fin:
 	ret
