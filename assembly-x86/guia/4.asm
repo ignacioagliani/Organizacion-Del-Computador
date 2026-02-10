@@ -19,7 +19,6 @@ section .bss
 	vector resd 15
 	cant_numeros resd 1
 	numero resd 1
-	minimo resd 1
 	
 	
 section .text
