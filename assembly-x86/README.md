@@ -7,3 +7,7 @@
 ## Enlazar con GCC
 
 `gcc -no-pie <programa.o> -o <programa>`
+
+## Ejecutar
+
+`./<programa>`
