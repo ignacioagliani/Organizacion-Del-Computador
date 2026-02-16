@@ -42,12 +42,14 @@ Los valores válidos son LU, MA, MI, JU, VI, SA, DO.
 * Resultados: BPF S/S de 16 bits
 * Tantos a favor: Empaquetado de 2 bytes
 * Tantos en contra: Empaquetado de 2 bytes
+
 El programa deberá imprimir por pantalla el nombre del campeón del torneo junto con la cantidad de partidos ganados y perdidos y su diferencia de tantos. Para determinar la cantidad de partidos ganados se procesa el campo Resultados que indica por cada bit el resultado de un partido del torneo. (En total cada equipo jugó 16 partidos) Si el bit está en 1 significa que el equipo ganó ese partido, si está en 0 significa que lo perdió.
 
 19. Se cuenta con una matriz (M) de 20x20 cuyos elementos son BPFC/S de 16 bits y un archivo (carbina.dat) cuyos registros están conformados por los siguientes campos:
 * Cadena de 16 bytes de caracteres ASCII que representa un BPFc/s de 16 bits
 * BPF s/s de 8 bits que indica el número de fila de M
 * BPF s/s de 8 bits que indica el número de columna de M
+
 Se pide codificar un programa que lea los registros del archivo y complete la matriz con dicha información. Como el contenido de los registros puede ser inválido deberá hacer uso de una rutina interna (VALREG) para validarlos (los registros inválidos serán descartados y se procederá a leer el siguiente). Luego realizar la sumatoria de la diagonal secundaria e imprimir el resultado por pantalla.
 
 Nota: Se deberá inicializar M con ceros por si no se lograra completar todos los elementos con la información provista en el archivo.
