@@ -5,14 +5,11 @@ extern puts
 section .data
 	PACK db "123C" ; En base 10 seria 123 positivo
 	letra_validas db 'A','B','C','D','E','F'
-
-section .bss
-	RESULT resb 1
+	RESULT db "N",0
 
 section .text
 
 es_empaquetado:
-	mov	byte [RESULT],'N'
 	sub	eax,eax
 	.loop:
 		cmp	eax,3
@@ -36,12 +33,13 @@ verificar_letra:
 	.loop1:
 		cmp	ebx,6
 		je	invalido
-		mov	al, byte [PACK+eax]
-		cmp	al,byte [letra_validas+ebx]
+		mov	dl, byte [PACK+eax]
+		cmp	dl,byte [letra_validas+ebx]
 		je	valido
 
 		inc	ebx
 		jmp	.loop1
+	ret
 
 valido:
 	mov     byte [RESULT],'S'
