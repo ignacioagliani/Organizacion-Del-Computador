@@ -22,3 +22,4 @@
 9. Dada una matriz de 5x5, determinar si dicha matriz es triangular superior y/o inferior e imprimir el resultado por pantalla.
 
 10. Realizar una rutina interna que reciba como parámetro un campo PACK en formato de Decimal Empaquetado de 2 bytes y devuelva en un campo RESULT en formato carácter de 1 byte, indicando una ‘S’ en caso que sea un empaquetado válido, y en caso contrario una ‘N’.
+
