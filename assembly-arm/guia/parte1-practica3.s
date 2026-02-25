@@ -41,7 +41,7 @@ imprimirInt:
 @ Postcondiciones: imprime el entero por la standard output.
     stmfd   sp!, {r0, r1, lr}
     mov     r0, #1           @ Destino: Pantalla
-    mov     r1, r12          @ Valor: El número que quieres ver
+    mov     r1, r12          @ Valor: El número que queres ver
     swi     putint             @ Llamada a imprimir entero
     ldmfd   sp!, {r0, r1, pc}
 
