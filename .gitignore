@@ -51,7 +51,6 @@ target/
 
 # --- NASM / YASM / assembler intermediates ---
 *.i          # preprocessed output (sometimes used)
-*.s          # if you generate assembly from other sources
 *.pp         # generic preprocessor outputs
 *.tmp
 *.temp
