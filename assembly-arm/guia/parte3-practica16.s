@@ -20,6 +20,7 @@ loop:
     sub r6,r6,#1    @ Le restamos 1 a len vector
     cmp r6,#0
     beq fin
+    b   loop
 
 
 imprimir:
