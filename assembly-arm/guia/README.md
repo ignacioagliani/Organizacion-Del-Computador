@@ -77,3 +77,33 @@ Una salida aceptable del programa sería, para el caso que el valor de entrada f
 120
 ```
 Puede asumirse que el archivo no contendrá un entero negativo.
+
+### Práctica 13: Cálculo recursivo de factorial
+Escribir el código ARM que ejecutado bajo ARMSim# lea un entero desde un archivo, calcule el factorial de ese entero haciendo llamadas recursivas a la misma subrutina y muestre los valores intermedios del proceso.
+
+### Práctica 14: Cálculo de fibonacci
+Escribir el código ARM que ejecutado bajo ARMSim# lea un entero desde un archivo, calcule el valor de la posición que corresponde a ese entero en la sucesión de Fibonacci.
+
+## Parte 3
+
+### Práctica 15: Imprimir y reemplazar enteros almacenados en memoria
+
+Escribir el código ARM que ejecutado bajo ARMSim# imprima dos valores enteros definidos en memoria, los reemplace por otros dos valores e imprima los dos nuevos valores.
+
+### Práctica 16: Mostrar elementos de un vector utilizando direccionamiento por registro indirecto
+Escribir el código ARM que ejecutado bajo ARMSim# imprima los valores de un vector de cuatro enteros definidos en memoria, recorriendo el vector mediante una subrutina que utilice direccionamiento por registro indirecto.
+
+### Práctica 17: Mostrar elementos de un vector utilizando direccionamiento por registro indirecto con post-incremento
+Modificar el ejercicio para utilizar direccionamiento por registro indirecto con post-incremento.
+
+### Práctica 18: Mostrar elementos de un vector utilizando direccionamiento por registro indirecto con registro indexado
+Modificar el ejercicio para utilizar direccionamiento por registro indirecto con registro indexado.
+
+### Práctica 19: Mostrar elementos de un vector utilizando direccionamiento por registro indirecto con registro indexado escalado
+Modificar el ejercicio para utilizar direccionamiento por registro indirecto con registro indexado escalado.
+
+### Práctica 20: Encontrar el menor elemento de un vector
+Escribir el código ARM que ejecutado bajo ARMSim# encuentre e imprima el menor elemento de un vector, donde el vector está especificado con el label vector y la longitud del vector con el label long_vector.
+
+### Práctica 21: Calcular y almacenar suma de una constante a un vector
+Escribir el código ARM que ejecutado bajo ARMSim# lea los valores de un vector (vector) de longitud long_vector, sume un valor específico (valor) y guarde el resultado en otro vector (vector_suma).
