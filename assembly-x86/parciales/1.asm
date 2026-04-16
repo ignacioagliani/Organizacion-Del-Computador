@@ -61,9 +61,9 @@ solicitarPais:
 	call gets
 	add rsp,8
 
-	mov rdi,buffer
-	mov rsi,formato
-	mov rdx,colPais
+	mov rdi,buffer	; De donde se lee el dato
+	mov rsi,formato	; Formato esperado
+	mov rdx,colPais	; Variable donde se guarda valor convertido
 
 	sub rsp,8
 	call sscanf
@@ -73,7 +73,9 @@ solicitarPais:
 
 contarMundiales:
     ; Calcular inicio de fila del país en matriz
-    mov rax, [colPais]
+	; Rax es el indice.
+	; A_ij = direccion A + (i * #cols  + j) * sizeof(A_ij)
+    mov rax, [colPais]	;Carga contenido de colPais en RAX
     dec rax
     imul rax, 9*2
     lea r12, [matriz + rax]     ; r12 = inicio fila del país
@@ -152,9 +154,9 @@ leerArchivo:
 	mov [codigoPais],al
 
 	; Leer anoMundial
-	mov rdi,buffer
-	mov rsi,1
-	mov rdx,2
+	mov rdi,buffer	; Donde se almacena lo leido
+	mov rsi,1		; Cantidad bloques a leer
+	mov rdx,2		; Cantidad bytes a leer
 	mov rcx,[punteroArchivo]
 
 	sub rsp,8
@@ -188,9 +190,9 @@ leerArchivo:
 
 	; Aca solo llegan entradas validas
 	; Matriz[Pais][Mundial]
-	movzx r10,word[anoMundial]
+	movzx r10,word[anoMundial]	;movzx lleva contenido de registros pequeños a otros mas grandes
 	mov rax,0
-	lea r11,[anios]
+	lea r11,[anios]		; Carga la direccion de memoria donde comienza el array
 	sub rsp,8
 	call obtenerColumnaMundial
 	add rsp,8
