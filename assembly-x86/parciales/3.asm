@@ -9,299 +9,283 @@ extern printf
 
 section .data
 
-	nombreArch		db	"ENCUESTA.DAT",0
-	modo			db	"rb",0
-	rec0			dw	"IN"
-	rec1			dw	"CO"
-	rec2			dw	"SI"
-	rec3			dw	"LU"
-	mensaje			db	"Para la opcion %s, la compania %d elijio ese recurso con un %d %%",10,0
+	nombreArchivo    db    "ENCUESTA.DAT",0
+	msjErrAbrir      db    "No se puedo abrir archivo!",10,0
+	modo             db    "rb",0
 
-	fmtRecurso		db	"%s",0
-	fmtCompania		db	"%d",0
+	recurso          dw    "**"
+	compania         dw    0
+	fila             dq    0
+	desplazamiento   dq    0
+	votos            dq    0
+	cantTotalComps   dq    0
+	companiaMasElijio db   0
+	mensaje          db    "Compania: %d, Votos: %d%%",10,0
+	columnaUsuario   dq    0
+	totalColumna     dq    0
+	porcentaje       dq    0
+	matriz           times    40     dw    0 
 
-	abriendoArch	db	"Abriendo Archivo ...",10,0
-	errorAbriendo	db	"Ha ocurrido un error al abrir archivo",10,0
-	cerrandoArch	db	"Cerrando Archivo",10,0
-	invalidoRec		db	"Recurso Invalido",10,0
-	leyendoComp		db	"Leyendo Compania",10,0
-	invalidaComp	db	"Compania Invalida",10,0
-	ingreseRecurso	db	"Ingrese Un Recurso",10,0
-
-	cantidadTotalProcesada			dq 		0
+ 	vectorRecursos      db    "IN"
+						db    "CO"
+						db    "SI"
+						db    "LU"
 
 section .bss
-	matriz		times	40	resw 1
-	ptrArchivo		resq	1
-	recursoActual	resw	1
-	companiaActual	resb	1
 
-	fila		resq	1
-	columna		resb	1
-
-	buffer		resb	16
+	ptrArchivo        resq    1
+	registroValido    resb    1
+	datoValido        resb    1
+	buffer            resb    10
 
 section .text
 
 main:
-	sub		rsp,8
-	call	abrirArch
-	add		rsp,8
 
-	sub		rsp,8
-	call	procesar
-	add		rsp,8
+	; Abro Archivo
 
-	sub		rsp,8
-	call	cerrarArch
-	add		rsp,8
-
-	sub		rsp,8
-	call	solicitarRecurso
-	add		rsp,8
-
-	ret
-
-abrirArch:
-	mov		rdi,abriendoArch
-
-	sub		rsp,8
-	call	puts
-	add		rsp,8
-
-	mov		rdi,nombreArch
+	mov		rdi,nombreArchivo
 	mov		rsi,modo
-
 	sub		rsp,8
 	call	fopen
 	add		rsp,8
-
 	cmp		rax,0
 	jle		errorApertura
-
 	mov		qword[ptrArchivo],rax
 
+leerRegistro:
+
+	; Proceso Contenido
+
+	mov    rdi,recurso
+	mov    rsi,2
+	mov    rdx,1
+	mov    rcx,qword[ptrArchivo]
+	sub    rsp,8
+	call   fread
+	add    rsp,8
+	cmp    rax,0
+	jle    finArchivo
+
+	mov    rdi,compania
+	mov    rsi,2          ; Leo 2 Por Padding
+	mov    rdx,1
+	mov    rcx,qword[ptrArchivo]
+	sub    rsp,8
+	call   fread
+	add    rsp,8
+	cmp    rax,0
+	jle    finArchivo
+
+	; Valido Registro
+
+	sub    rsp,8
+	call   VALREG
+	add    rsp,8
+	cmp    byte[registroValido],'N'
+	je     leerRegistro
+
+	; Si llego aca, registros son validos
+
+	sub    rsp,8
+	call   escribirMatriz
+	add    rsp,8
+
+	; DEBUG - borrar después
+
+	jmp    leerRegistro
+
+finArchivo:
+
+	; Cierro Archivo
+
+	mov    rdi,qword[ptrArchivo]
+	sub    rsp,8
+	call   fclose
+	add    rsp,8
+
+	; Pido Dato a Usuario
+
+	mov    rdi,buffer
+	sub    rsp,8
+	call   gets
+	add    rsp,8
+
+    sub    rsp, 8
+    call   recursoUsuario
+    add    rsp, 8
+
+	mov    rdi,mensaje
+	movsx  rsi, byte[companiaMasElijio]
+	mov    rdx,[porcentaje]
+	sub    rsp,8
+	call   printf
+	add    rsp,8
+
+finDePrograma:
 	ret
 
 errorApertura:
-	mov		rdi,errorAbriendo
+	mov    rdi,msjErrAbrir
+	sub    rsp,8
+	call   puts
+	add    rsp,8
+	jmp    finDePrograma
 
-	sub		rsp,8
-	call	puts
-	add		rsp,8
-
+calcularDesplazamiento:
+	mov    rbx,0
+	mov    rbx,qword[fila]     ; (fila-1)
+	imul   rbx,rbx,20          ; (fila-1) * Cant. Elem. Filas -> 20 = 10 * 2
+	                           ; Donde 10 es cantidad de colmunas y 2 la longitud del elemento
+	mov    rax,0
+	add    ax,[compania]       ; columna
+	dec    ax                  ; (columna-1)
+	imul   ax,ax,2                ; (columna-1) * Long. Elem
+	cwde
+	cdqe
+	add    rbx,rax             ; (fila-1) * Cant. Elem. Filas + (columna-1) * Long. Elem
+	mov    [desplazamiento],rbx
 	ret
 
-procesar:
-	mov		rdi,recursoActual	; Donde se Almacena lo Leido
-	mov		rsi,2			; Tamaño Elemento a Leer
-	mov		rdx,1			; Cantidad Elementos a Leer
-	mov		rcx,[ptrArchivo]	; De que Archivo los lee
+escribirMatriz:
+	sub    rsp,8
+	call   calcularDesplazamiento
+	add    rsp,8
 
-	sub		rsp,8
-	call	fread
-	add		rsp,8
-
-	cmp		rax,0
-	je		EOF
-
-	mov		rdi,companiaActual
-	mov		rsi,1
-	mov		rdx,1
-	mov		rcx,[ptrArchivo]
-
-	sub		rsp,8
-	call	fread
-	add		rsp,8
-
-	cmp		rax,0
-	je		EOF
-
-	sub		rsp,8
-	call	VALREG
-	add		rsp,8
-
-	jmp		procesar
-
-EOF:
+	mov    r9,matriz
+	mov    r10,[desplazamiento]
+	xor    rax,rax
+	mov    ax,[r9+r10]
+	inc    ax
+	mov    [r9 + r10],ax
 	ret
 
 VALREG:
-	movzx	rbx, byte[companiaActual]
-	dec		rbx	; Columna
-	cmp		rbx,0
-	jl		campoInvalido
-	cmp		rbx,9
-	jg		campoInvalido
+	mov    byte[registroValido],'N'
 
-	mov		ax,[recursoActual]
+	; Valido Recurso
 
-	cmp		ax,[rec0]
-	je		internet
+	sub    rsp,8
+	call   validarRecurso
+	add    rsp,8
+	cmp    byte[datoValido],'N'
+	je     finValidarRegistro
+	
+	; Valido Compania
 
-	cmp		ax,[rec1]
-	je		compu
+    sub    rsp,8
+    call   validarCompania
+    add    rsp,8
+	cmp    byte[datoValido],'N'
+	je     finValidarRegistro
 
-	cmp		ax,[rec2]
-	je		silla
+	inc    qword[cantTotalComps]
+	mov    byte[registroValido],'S'
 
-	cmp		ax,[rec3]
-	je		luz
-
-	mov		rax,-1
+finValidarRegistro:
 	ret
+
+validarRecurso:
+	mov    byte[datoValido],'N'
+	mov    qword[fila],0
+	mov    rbx,0
+	mov    rcx,4    ; Cant. Iteraciones
+
+cicloRecurso:
+	push   rcx
+	mov    rcx,2
+	lea    rsi,[recurso]
+	lea    rdi,[vectorRecursos + rbx]
+	repe   cmpsb
+	pop    rcx
+
+	je     recursoValido
+	add    rbx,2
+	inc    qword[fila]
+	loop   cicloRecurso
+	ret
+
+recursoValido:
+	mov    byte[datoValido],'S'
+    ret
+
+validarCompania:
+    mov    byte[datoValido],'N'
+	mov    al,byte[compania]
+	cmp    al,1
+	jl     companiaInvalida
+	cmp    al,10
+	jg     companiaInvalida
+    mov    byte[datoValido],'S'
+
+companiaInvalida:
+	ret
+
+recursoUsuario:
+	mov ax, word[buffer]
+
+	cmp ax, word[vectorRecursos]
+	je  internet
+	cmp ax, word[vectorRecursos+2]
+	je  compu
+	cmp ax, word[vectorRecursos+4]
+	je  silla
+	cmp ax, word[vectorRecursos+6]
+	je  luz
+
+	jmp    opcionInvalida
 
 internet:
-	; A[i][j] = A[( ( i * cnt(j) ) + j ) * sizeof(elemento)]
-	inc		word [matriz + rbx * 2]
-    inc     qword[cantidadTotalProcesada]
-
-    jmp     finProcesar
+    mov    qword[columnaUsuario],0
+	jmp    analizarColumna
 
 compu:
-    add     rbx,10
-    inc     word [matriz + rbx * 2]
-	inc     qword[cantidadTotalProcesada]
-    jmp     finProcesar
-
-silla:
-    add     rbx,20
-    inc     word [matriz + rbx * 2]
-	inc     qword[cantidadTotalProcesada]
-	jmp		finProcesar
-
-luz:
-    add     rbx,30
-    inc     word [matriz + rbx * 2]
-	inc     qword[cantidadTotalProcesada]
-
-finProcesar:
-	mov		rax,1
-	ret
-
-campoInvalido:
-	mov		rax,-1
-	ret
-
-cerrarArch:
-	mov		rdi,cerrandoArch
-
-	sub		rsp,8
-	call	puts
-	add		rsp,8
-
-	mov		rdi,[ptrArchivo]
-
-	sub		rsp,8
-	call	fclose
-	add		rsp,8
-
-	ret
-
-solicitarRecurso:
-	mov		rdi,ingreseRecurso
-
-	sub		rsp,8
-	call	puts
-	add		rsp,8
-
-	mov		rdi,buffer
-
-	sub		rsp,8
-	call	gets
-	add		rsp,8
-
-	; Agarro Primeros dos Bytes del Usuario
-
-	sub		rsp,8
-	call	obtenerFila
-	add		rsp,8
-
-	; RAX Tiene Numero Recurso (Fila)
-	imul	rax,10	; i * cnt(j)
-	mov		r15,0	; Acumula Cantidad de Ese Recurso
-	mov		r14,0	; Guarda el Numero de Compania (Columna)
-	mov 	r13,0	; Contador
-
-bucle:
-	mov		rbx,0
-	cmp		r13,10
-	je		imprimirResultados
-
-	; A[i][j] = A[( ( i * cnt(j) ) + j ) * sizeof(elemento)]
-	add		rbx,rax
-	add		rbx,r13
-	imul	rbx,2
-
-	movzx	r11,word[matriz + rbx]	; Cantidad Actual
-	cmp		r11,r15
-	jg		cambiarMax
-
-	inc		r13
-	jmp		bucle
-
-cambiarMax:
-	mov		r15,r11
-	mov		r14,r13
-	inc		r14		; Compania Es Indice+1
-	inc		r13
-	jmp		bucle
-
-obtenerFila:
-	mov		ax,[buffer]
-
-	cmp		ax,[rec0]
-	je		raxEn0
-
-	cmp		ax,[rec1]
-	je		raxEn1
-
-	cmp		ax,[rec2]
-	je		raxEn2
-
-	cmp		ax,[rec3]
-	je		raxEn3
-
-	mov		rax,-1	; No lo voy a validar. La consigna no lo indica.
-	ret
-
-raxEn0:
-	mov		rax,0
-	ret
-
-raxEn1:
-	mov		rax,1
-	ret
-
-raxEn2:
-	mov		rax,2
-	ret
-
-raxEn3:
-	mov		rax,3
-	ret
-
-imprimirResultados:
-    imul	rax,r15,100
-	xor		rdx,rdx
-	mov		rbx,[cantidadTotalProcesada]
-
-	cmp		rbx,0
-	je		final_error
+    mov    qword[columnaUsuario],1
+	jmp    analizarColumna
 	
-	div		rbx
-	; RAX tiene parte entera (porcentaje)
+silla:
+	mov    qword[columnaUsuario],2
+	jmp    analizarColumna
+luz:  
+    mov    qword[columnaUsuario],3
 
-	mov		rdi,mensaje
-	mov		rsi,buffer
-	mov		rdx,r14
-	mov		rcx,rax
+analizarColumna:
+    mov    r14, qword[columnaUsuario]
+    imul   r14, r14, 2
+    lea    rsi, [matriz + r14]
+    mov    rcx, 10                 ; Cant. Iter.
 
-	sub		rsp,8
-	call	printf
-	add		rsp,8
+    mov    qword[votos], 0          ; Max votos hasta ahora
+    mov    qword[totalColumna], 0 ; total votos columna
+    mov    rbx, 1                   ; compania actual (1 a 10)
 
+ciclo:
+    xor    rax, rax
+    mov    ax,[rsi]              ; votos de esta compania en esa columna
+
+    add    qword[totalColumna], rax  ; acumulo total
+
+    cmp    ax, word[votos]        ; es mayor al maximo?
+    jle    noEsMayor
+
+    mov    word[votos], ax        ; actualizo maximo
+    mov    byte[companiaMasElijio], bl ; guardo que compania es
+
+noEsMayor:
+    inc    rbx
+    add    rsi, 20               ; siguiente fila (10 columnas * 2 bytes)
+    loop   ciclo
+
+calcularPct:
+    xor    rdx,rdx
+    mov    rax,qword[votos]
+    imul   rax,rax,100
+    idiv   qword[totalColumna]
+    mov    qword[porcentaje],rax
+    ret
+
+finIter:
 	ret
 
-final_error:
-	ret
+opcionInvalida:
+    ret

@@ -23,9 +23,9 @@ section .data
 	matriz           times    450     dw    "**" 
 	paisGetsInt      dd    1
 	
-	pais       times    1    dw    0
-	anio       times    1    dw    0
-	inst       times    1    dw    "**"
+	pais             dw    0
+	anio             dw    0
+	inst             dw    "**"
 		
 	vectorInstancias    db    "NP"
 						db    "FG"
