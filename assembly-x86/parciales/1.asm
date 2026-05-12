@@ -209,17 +209,17 @@ VALREG:
 	
 	; Valido Anio
 
-        sub    rsp,8
-        call   validarAnio
-        add    rsp,8
+	sub    rsp,8
+	call   validarAnio
+	add    rsp,8
 	cmp    byte[datoValido],'N'
 	je     finValidarRegistro
 
 	; Valido Instacia
 
-        sub    rsp,8
-        call   validarInstancia
-        add    rsp,8
+	sub    rsp,8
+	call   validarInstancia
+	add    rsp,8
 	cmp    byte[datoValido],'N'
 	je     finValidarRegistro
 
@@ -241,11 +241,11 @@ paisNoEsValido:
 	ret
 
 validarAnio:
-        mov    byte[datoValido],'N'
-		mov    word[columna],0
-        xor    rbx,rbx
-        mov    rcx,9
-		mov    ax,[anio]
+	mov    byte[datoValido],'N'
+	mov    word[columna],0
+	xor    rbx,rbx
+	mov    rcx,9
+	mov    ax,[anio]
 
 cicloResultadosAnio:
 	cmp    ax,[anios + rbx]
@@ -258,27 +258,27 @@ cicloResultadosAnio:
 	ret
 
 anioValido:
-        mov    byte[datoValido],'S'
-        ret
+	mov    byte[datoValido],'S'
+	ret
 
 validarInstancia:
 	mov    byte[datoValido],'N'
-        mov    rbx,0
-        mov    rcx,6
+	mov    rbx,0
+	mov    rcx,6
 
 cicloResultadosInst:
-        push   rcx
-        mov    rcx,2
-        lea    rsi,[inst]
-        lea    rdi,[vectorInstancias + rbx]
-        repe   cmpsb
-        pop    rcx
+	push   rcx
+	mov    rcx,2
+	lea    rsi,[inst]
+	lea    rdi,[vectorInstancias + rbx]
+	repe   cmpsb
+	pop    rcx
 
-        je     instValida
-        add    rbx,2
-        loop   cicloResultadosInst
+	je     instValida
+	add    rbx,2
+	loop   cicloResultadosInst
 	ret
 
 instValida:
 	mov    byte[datoValido],'S'
-        ret
+    ret

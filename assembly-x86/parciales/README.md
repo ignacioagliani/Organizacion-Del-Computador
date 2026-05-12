@@ -51,3 +51,28 @@ Se pide realizar un programa en assembler Intel que:
 1. Lea el archivo y por cada registro llene una matriz (M) de 4x10 donde cada fila representa a un recurso y cada columna una compañía. Cada elemento de M es un binario de punto fijo sin signo de 2 bytes y representa la sumatoria de respuestas para cada recurso en cada compañía;
 2. Validar los datos del registro mediante una rutina interna (VALREG) para que puedan ser descartados los inválidos.
 3. Padrón PAR: ingresar por teclado un código de recurso e informar por pantalla la compañía que más lo eligió y que % representa del total. Padrón IMPAR: ingresar por teclado un código de compañía e informar por pantalla el recurso con mayor cantidad de votos y que % representa del total.
+
+# 4.asm
+
+Se dispone de una matriz de 30x10 que representa un tablero de Tetris (30 de alto y 10
+de largo).Cada elemento de la matriz indica si ese punto del tablero está ocupado o no
+siendo  "*"; (asterisco) ocupado y "" (espacio en blanco) en caso contrario.
+Para cargar el tablero se hará uso de un archivo (FICHAS.DAT) que contiene el
+posicionamiento inicial de las fichas. Solo hay fichas de tipo "|" (dimensión 4x1) y cada
+registro del archivo tiene los siguientes campos:
+●  Fila: CL2 (Indica la fila de la posición inicial de la ficha - 1..30)
+●  Columna: BL1 (Indica la columna de la posición inicial de la ficha - 1..10)
+●  Sentido: CL1 (Indica el sentido hacia donde continúan el resto de las posiciones que
+ocupa la ficha en el tablero   A - Arriba; B - Abajo; D - Derecha; I - Izquierda)
+Se pide realizar un programa en assembler Intel 8086 que realice la carga del tablero
+(se asume que las fichas no solapan). Como la información del archivo puede ser
+incorrecta se deberá validar haciendo uso de una rutina interna (VALFICHA) para
+descartar los inválidos. La rutina deberá validar todos los campos del registro (tipo de
+datos, valores y que la ficha quepa en el tablero)  
+
+Se pide
+1. Carga del tablero
+2. Codificación de rutina interna VALFICHA
+3. Para aquellos alumnos con padrón PAR se deben imprimir los nros de filas
+donde todos los elementos tienen * mientras que los alumnos con padrón IMPAR
+los nros de columnas donde todos tiene *.

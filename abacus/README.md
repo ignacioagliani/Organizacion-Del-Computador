@@ -1,4 +1,4 @@
-# Máquina Elementar Abacus
+# Máquina Elemental Abacus
 
 ## Ejercicio 1
 Se tiene una lista (L) cuya dirección de inicio se encuentra almacenada en la celda 200(16) que representa las ventas de teléfonos celulares. Cada nodo de la lista (L) está formado por 3 celdas contiguas en memoria:
