@@ -8,8 +8,6 @@ extern puts
 extern printf
 extern sscanf
 
-; Compila pero no anda
-
 section .data
 
 	nombreArchivo    db    "mundiales.dat",0
@@ -23,11 +21,11 @@ section .data
 	instSF           dw    "SF"
 	instFI           dw    "FI"
 	matriz           times    450     dw    "**" 
-
-	infoArchivo    times    0    db    ''
-		pais       times    1    db    0
-		anio       times    1    dw    0
-		inst       times    1    dw    " "
+	paisGetsInt      dd    1
+	
+	pais       times    1    dw    0
+	anio       times    1    dw    0
+	inst       times    1    dw    "**"
 		
 	vectorInstancias    db    "NP"
 						db    "FG"
@@ -44,8 +42,6 @@ section .bss
 	registroValido    resb    1
 	datoValido        resb    1
 	buffer            resb    100
-	paisGetsInt       resd    1
-
 	
 section .text
 main:
@@ -64,8 +60,28 @@ leerRegistro:
 	
 	; Proceso Contenido
 
-	mov    rdi,infoArchivo
-	mov    rsi,5
+	mov    rdi,pais
+	mov    rsi,2     ; Archivo binario tiene 1 byte padding. necesito leer 2.
+	mov    rdx,1
+	mov    rcx,qword[ptrArchivo]
+	sub    rsp,8
+	call   fread
+	add    rsp,8
+	cmp    rax,0
+	jle    finArchivo
+
+	mov    rdi,anio
+	mov    rsi,2
+	mov    rdx,1
+	mov    rcx,qword[ptrArchivo]
+	sub    rsp,8
+	call   fread
+	add    rsp,8
+	cmp    rax,0
+	jle    finArchivo
+
+	mov    rdi,inst
+	mov    rsi,2
 	mov    rdx,1
 	mov    rcx,qword[ptrArchivo]
 	sub    rsp,8
@@ -164,32 +180,21 @@ obtenerNoMejores:
 	mov    rcx,9
 
 cicloColumnas:
+    mov ax, word[rsi]
 
-	cmp    byte[rsi],'S'
-	je     posibleSF
+    cmp ax, word[instSF]
+    je  esMejor
 
-	cmp    byte[rsi],'F'
-	je     posibleFI
-
-	jmp    noMejor
-
-posibleSF:
-	cmp    byte[rsi+1],'F'
-	je     esMejor
-	jmp    noMejor
-
-posibleFI:
-	cmp    byte[rsi+1],'I'
-	je     esMejor
+    cmp ax, word[instFI]
+    je  esMejor
 
 noMejor:
-	inc    dword[cantidad]
+    inc dword[cantidad]
 
 esMejor:
-	add    rsi,2
-	loop   cicloColumnas
-
-	ret
+    add rsi,2
+    loop cicloColumnas
+    ret
 
 VALREG:
 	mov    byte[registroValido],'N'
