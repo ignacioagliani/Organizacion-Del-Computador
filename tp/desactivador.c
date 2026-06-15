@@ -354,8 +354,8 @@ int main(void) {
         case 5:
             // Fase 6 — clave en rsp + 0x3c. Se inyecta en rsp+0x4c.
             {
-                uint32_t fb = leer_direccion_memoria(proceso_hijo, rsp + 0x3c);
-                inyectar(proceso_hijo, rsp + 0x4c, fb);
+                uint32_t clave_correcta = leer_direccion_memoria(proceso_hijo, rsp + 0x3c);
+                inyectar(proceso_hijo, rsp + 0x4c, clave_correcta);
             }
             break;
         }
